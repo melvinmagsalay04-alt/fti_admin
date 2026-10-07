@@ -134,7 +134,7 @@ if(!dateStr){
 
 function showError(msg){
   document.getElementById('page-content').innerHTML=
-    '<div class="state-msg">'+esc(msg)+'<br><br><a href="admin.html" style="color:#1e40af;font-weight:700;">Back to Admin</a></div>';
+    '<div class="state-msg">'+esc(msg)+'<br><br><a href="index.html" style="color:#1e40af;font-weight:700;">Back to Admin</a></div>';
 }
 
 async function loadAndRender(ds){
@@ -153,7 +153,7 @@ async function loadAndRender(ds){
 
   if(!tickets.length){
     document.getElementById('page-content').innerHTML=
-      '<div class="state-msg">No records found for <strong>'+dateLabel+'</strong>.<br><br><a href="admin.html" style="color:#1e40af;font-weight:700;">Back to Admin</a></div>';
+      '<div class="state-msg">No records found for <strong>'+dateLabel+'</strong>.<br><br><a href="index.html" style="color:#1e40af;font-weight:700;">Back to Admin</a></div>';
     return;
   }
 
