@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics — P20 DDN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a5f, #2563eb);
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .header-title { color: #fff; font-size: 16px; font-weight: 800; }
+    .header-sub { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 1px; }
+    .btn-back {
+      padding: 7px 14px; background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
+      color: #fff; font-size: 13px; font-weight: 700;
+      text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; }
+
+    .live-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; margin-bottom: 16px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    .storage-alert {
+      display: none; align-items: flex-start; gap: 10px;
+      padding: 14px 16px; border-radius: 14px; margin-bottom: 14px;
+      font-size: 13px; line-height: 1.5; font-weight: 600;
+    }
+    .storage-alert.show { display: flex; }
+    .storage-alert .sa-icon { font-size: 22px; line-height: 1; }
+    .storage-alert b { display: block; font-size: 14px; font-weight: 800; }
+    .storage-alert.warn   { background: #fef3c7; border: 1.5px solid #fbbf24; color: #92400e; }
+    .storage-alert.danger { background: #fee2e2; border: 1.5px solid #f87171; color: #991b1b; }
+
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .kpi { background: #fff; border-radius: 14px; padding: 16px; border: 1px solid #e2e8f0; }
+    .kpi-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; margin-bottom: 6px; }
+    .kpi-val { font-size: 28px; font-weight: 800; color: #1e3a5f; line-height: 1; }
+    .kpi-val.green { color: #10b981; }
+    .kpi-val.warn { color: #d97706; }
+    .kpi-val.danger { color: #dc2626; }
+    .kpi-sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+    .card { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
+    .card-head {
+      padding: 14px 16px 0; font-size: 13px; font-weight: 800; color: #1e293b;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #eff6ff; color: #2563eb; }
+    .card-badge.warn { background: #fef3c7; color: #92400e; }
+    .card-badge.danger { background: #fee2e2; color: #991b1b; }
+    .card-body { padding: 12px 16px 16px; }
+
+    .vstat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .vstat { background: #f8fafc; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #e2e8f0; }
+    .vstat-val { font-size: 22px; font-weight: 800; color: #1e3a5f; line-height: 1; }
+    .vstat-val.today { color: #10b981; }
+    .vstat-val.week  { color: #2563eb; }
+    .vstat-lbl { font-size: 10px; color: #94a3b8; margin-top: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .chart-section-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .chart-wrap { position: relative; width: 100%; height: 160px; }
+
+    .split-bar { height: 8px; border-radius: 99px; overflow: hidden; background: #f1f5f9; display: flex; margin-bottom: 10px; }
+    .split-am { background: #3b82f6; height: 100%; transition: width 0.7s; }
+    .split-pm { background: #a78bfa; height: 100%; transition: width 0.7s; }
+    .split-labels { display: flex; justify-content: space-between; }
+    .split-lbl { font-size: 12px; color: #64748b; }
+    .split-lbl b { font-size: 16px; display: block; }
+    .split-lbl b.am { color: #3b82f6; }
+    .split-lbl b.pm { color: #a78bfa; }
+
+    .user-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; }
+    .user-item:last-child { border-bottom: none; }
+    .user-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .ui-mobile { background: #eff6ff; }
+    .ui-desktop { background: #f0fdf4; }
+    .ui-admin { background: #fef3c7; }
+    .ub-a { background: #fef3c7; color: #92400e; }
+    .user-name { font-size: 13px; font-weight: 700; }
+    .user-time { font-size: 11px; color: #94a3b8; }
+    .ubadge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; flex-shrink: 0; }
+    .ub-m { background: #eff6ff; color: #2563eb; }
+    .ub-d { background: #f0fdf4; color: #059669; }
+    .empty { padding: 20px; text-align: center; color: #94a3b8; font-size: 13px; }
+
+    .bar-row { margin-bottom: 12px; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-head { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 5px; }
+    .bar-head span:last-child { color: #94a3b8; font-weight: 600; font-family: monospace; }
+    .bar-track { height: 7px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; transition: width 0.8s; }
+
+    .quota-meter { margin-bottom: 18px; }
+    .quota-track { position: relative; height: 12px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+    .quota-fill { height: 100%; width: 0%; background: #10b981; border-radius: 99px; transition: width 0.8s, background 0.3s; }
+    .quota-fill.warn { background: #f59e0b; }
+    .quota-fill.danger { background: #ef4444; }
+    .quota-mark { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(30,41,59,0.35); }
+    .quota-legend { display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px; }
+    .quota-caption { font-size: 12px; color: #64748b; margin-top: 8px; font-weight: 600; }
+    .quota-caption b { color: #1e293b; }
+
+    .storage-total { margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: flex-start; }
+    .storage-total-label { font-size: 12px; font-weight: 700; color: #64748b; }
+    .storage-total-val { font-size: 16px; font-weight: 800; color: #1e3a5f; }
+    .storage-quota { font-size: 11px; color: #94a3b8; margin-top: 2px; text-align: right; }
+    .btn-rescan {
+      margin-top: 14px; width: 100%; padding: 9px; border: 1px solid #e2e8f0;
+      background: #f8fafc; border-radius: 10px; font: 700 12px 'Nunito', sans-serif;
+      color: #475569; cursor: pointer;
+    }
+    .btn-rescan:disabled { opacity: 0.6; cursor: default; }
+
+    .counts-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .count-item { text-align: center; padding: 12px 8px; border-right: 1px solid #f1f5f9; }
+    .count-item:last-child { border-right: none; }
+    .count-val { font-size: 20px; font-weight: 800; color: #1e3a5f; }
+    .count-lbl { font-size: 10px; color: #94a3b8; margin-top: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    @media (max-width: 400px) {
+      .kpi-val { font-size: 24px; }
+      .counts-grid { grid-template-columns: 1fr 1fr; }
+      .count-item:nth-child(2) { border-right: none; }
+      .count-item:nth-child(3) { border-right: 1px solid #f1f5f9; border-top: 1px solid #f1f5f9; }
+      .count-item:nth-child(4) { border-top: 1px solid #f1f5f9; border-right: none; }
+      .vstat-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">📊 Analytics</div>
+    <div class="header-sub">P20 DDN Control Number System</div>
+  </div>
+  <a href="admin.html" class="btn-back">← Admin</a>
+</div>
+
+<div class="wrap">
+
+  <div class="live-row">
+    <div class="live-dot"></div>
+    <span id="last-updated">Connecting…</span>
+  </div>
+
+  <div class="storage-alert" id="storage-alert">
+    <div class="sa-icon" id="sa-icon">⚠️</div>
+    <div><b id="sa-title"></b><span id="sa-msg"></span></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Online Now</div>
+      <div class="kpi-val green" id="kpi-online">—</div>
+      <div class="kpi-sub">Active sessions</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Visitors</div>
+      <div class="kpi-val" id="kpi-visitors">—</div>
+      <div class="kpi-sub">All-time unique</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Tickets Today</div>
+      <div class="kpi-val" id="kpi-tickets">—</div>
+      <div class="kpi-sub" id="kpi-tickets-sub">AM: — · PM: —</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Storage Left</div>
+      <div class="kpi-val" id="kpi-dbsize" style="font-size:20px; padding-top:4px;">—</div>
+      <div class="kpi-sub" id="kpi-dbsize-sub">Scanning…</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      🔐 Admin Logins
+      <span class="card-badge" id="admin-badge">0 online</span>
+    </div>
+    <div class="card-body">
+      <div class="vstat-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="vstat"><div class="vstat-val today" id="admin-online">—</div><div class="vstat-lbl">Online Now</div></div>
+        <div class="vstat"><div class="vstat-val week" id="admin-today">—</div><div class="vstat-lbl">Logins Today</div></div>
+      </div>
+      <div id="admin-list"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      👥 Visitor Stats
+      <span class="card-badge" id="visitor-badge">Live</span>
+    </div>
+    <div class="card-body">
+      <div class="vstat-grid">
+        <div class="vstat"><div class="vstat-val today" id="visitors-today">—</div><div class="vstat-lbl">Today</div></div>
+        <div class="vstat"><div class="vstat-val week" id="visitors-week">—</div><div class="vstat-lbl">This Week</div></div>
+        <div class="vstat"><div class="vstat-val" id="visitors-alltime">—</div><div class="vstat-lbl">All-Time</div></div>
+      </div>
+      <div class="chart-section-label">Past 7 days</div>
+      <div class="chart-wrap">
+        <canvas id="visitorChart" role="img" aria-label="Bar chart of daily unique visitors over the past 7 days">Daily visitor counts for the past 7 days.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Today's Session Split</div>
+    <div class="card-body">
+      <div class="split-bar">
+        <div class="split-am" id="split-am" style="width:50%"></div>
+        <div class="split-pm" id="split-pm" style="width:50%"></div>
+      </div>
+      <div class="split-labels">
+        <div class="split-lbl"><b class="am" id="am-val">0</b>AM Tickets</div>
+        <div class="split-lbl" style="text-align:right"><b class="pm" id="pm-val">0</b>PM Tickets</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      Active Sessions
+      <span class="card-badge" id="online-badge">0 online</span>
+    </div>
+    <div class="card-body" style="padding-top:8px; padding-bottom:8px;">
+      <div id="active-list"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Device Breakdown</div>
+    <div class="card-body">
+      <div class="bar-row">
+        <div class="bar-head"><span>📱 Mobile</span><span id="mobile-pct">0%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="bar-mobile" style="background:#3b82f6; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>💻 Desktop</span><span id="desktop-pct">0%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="bar-desktop" style="background:#10b981; width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      🗄️ Firebase Storage Usage
+      <span class="card-badge" id="storage-badge">1 GB free</span>
+    </div>
+    <div class="card-body">
+
+      <div class="quota-meter">
+        <div class="quota-track">
+          <div class="quota-fill" id="quota-fill"></div>
+          <div class="quota-mark" style="left:50%"></div>
+          <div class="quota-mark" style="left:80%"></div>
+        </div>
+        <div class="quota-legend"><span>0%</span><span>50%</span><span>80%</span><span>100%</span></div>
+        <div class="quota-caption" id="quota-caption">Scanning database…</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-head"><span>tickets/</span><span id="sz-tickets">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-tickets" style="background:#3b82f6; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>takenNumbers/</span><span id="sz-taken">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-taken" style="background:#a78bfa; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>presence/</span><span id="sz-presence">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-presence" style="background:#10b981; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>visitors/</span><span id="sz-visitors">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-visitors" style="background:#f59e0b; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>disabledNumbers/</span><span id="sz-disabled">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-disabled" style="background:#ef4444; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>scheduleSettings/</span><span id="sz-schedule">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-schedule" style="background:#06b6d4; width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-head"><span>other (dates, slots…)</span><span id="sz-other">—</span></div>
+        <div class="bar-track"><div class="bar-fill" id="sfill-other" style="background:#64748b; width:0%"></div></div>
+      </div>
+
+      <div class="storage-total">
+        <div>
+          <div class="storage-total-label">Used</div>
+          <div class="storage-total-val" id="sz-total">—</div>
+        </div>
+        <div>
+          <div class="storage-total-label" style="text-align:right">Left</div>
+          <div class="storage-total-val" id="sz-left" style="text-align:right">—</div>
+          <div class="storage-quota" id="sz-quota">of 1,024 MB free quota</div>
+        </div>
+      </div>
+      <button class="btn-rescan" id="btn-rescan" onclick="scanStorage()">🔄 Re-scan storage</button>
+    </div>
+
+    <div class="counts-grid">
+      <div class="count-item"><div class="count-val" id="cnt-tickets">—</div><div class="count-lbl">Tickets</div></div>
+      <div class="count-item"><div class="count-val" id="cnt-taken">—</div><div class="count-lbl">Taken #s</div></div>
+      <div class="count-item"><div class="count-val" id="cnt-sessions">—</div><div class="count-lbl">Sessions</div></div>
+      <div class="count-item"><div class="count-val" id="cnt-visitors">—</div><div class="count-lbl">Visitors</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3RI_I9L9QV7N0t_sBV_SMjO8MzwRxE8E",
+    authDomain: "tagum-fti-queue.firebaseapp.com",
+    // If your Realtime Database is not in the US region, add it here, e.g.:
+    // databaseURL: "https://tagum-fti-queue-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tagum-fti-queue",
+    storageBucket: "tagum-fti-queue.firebasestorage.app",
+    messagingSenderId: "252063303156",
+    appId: "1:252063303156:web:28879704c9ee42455665a1",
+    measurementId: "G-ZTK78JDSEY"
+  };
+
+  // FIX 1: initialise Firebase before using it
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // ── Date helpers (FIX 2: local time instead of UTC) ─────────
+  function ymd(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+  function today() { return ymd(new Date()); }
+  function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
+  function estimateBytes(val) {
+    try { return new TextEncoder().encode(JSON.stringify(val)).length; } catch { return 0; }
+  }
+  function fmtBytes(b) {
+    if (!b || b < 1) return '0 B';
+    if (b < 1024) return b + ' B';
+    if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+    if (b < 1024 * 1024 * 1024) return (b / (1024 * 1024)).toFixed(2) + ' MB';
+    return (b / (1024 * 1024 * 1024)).toFixed(3) + ' GB';
+  }
+
+  // YYYY-MM-DD for each of the past N days (newest last)
+  function pastDays(n) {
+    const arr = [];
+    for (let i = n - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      arr.push(ymd(d));
+    }
+    return arr;
+  }
+
+  // YYYY-MM-DD of Monday this week
+  function weekStart() {
+    const d = new Date();
+    const day = d.getDay(); // 0=Sun
+    d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
+    return ymd(d);
+  }
+
+  function dayLabel(dateStr) {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  }
+
+  function bumpTime() {
+    document.getElementById('last-updated').textContent = 'Live · updated ' + fmtTime(Date.now());
+  }
+
+  // ── Storage scan ────────────────────────────────────────────
+  const FREE_QUOTA = 1024 * 1024 * 1024; // 1 GB free tier
+  const WARN_PCT = 50;
+  const DANGER_PCT = 80;
+  let visitorChart = null;
+
+  const STORAGE_ROWS = {
+    tickets:          ['sfill-tickets',  'sz-tickets'],
+    takenNumbers:     ['sfill-taken',    'sz-taken'],
+    presence:         ['sfill-presence', 'sz-presence'],
+    visitors:         ['sfill-visitors', 'sz-visitors'],
+    disabledNumbers:  ['sfill-disabled', 'sz-disabled'],
+    scheduleSettings: ['sfill-schedule', 'sz-schedule']
+  };
+  const OTHER_NODES = ['dateSettings', 'slotConfig', 'slots', 'adminPresence', 'adminLogins'];
+
+  async function scanStorage() {
+    const btn = document.getElementById('btn-rescan');
+    btn.disabled = true;
+    btn.textContent = '⏳ Scanning…';
+    try {
+      const names = [...Object.keys(STORAGE_ROWS), ...OTHER_NODES];
+      const snaps = await Promise.all(names.map(n => db.ref(n).once('value')));
+      const sizes = {};
+      let other = 0, total = 0;
+
+      snaps.forEach((s, i) => {
+        const n = names[i];
+        const b = s.exists() ? estimateBytes(s.val()) + n.length : 0;
+        total += b;
+        if (STORAGE_ROWS[n]) sizes[n] = b; else other += b;
+        if (n === 'tickets') document.getElementById('cnt-tickets').textContent = s.numChildren();
+      });
+
+      Object.entries(STORAGE_ROWS).forEach(([n, [fillId, szId]]) => {
+        document.getElementById(szId).textContent = fmtBytes(sizes[n]);
+        document.getElementById(fillId).style.width = (total ? sizes[n] / total * 100 : 0) + '%';
+      });
+      document.getElementById('sz-other').textContent = fmtBytes(other);
+      document.getElementById('sfill-other').style.width = (total ? other / total * 100 : 0) + '%';
+
+      const left = Math.max(FREE_QUOTA - total, 0);
+      const pct = total / FREE_QUOTA * 100;
+      const pctTxt = pct < 0.01 ? '<0.01' : pct.toFixed(2);
+
+      document.getElementById('sz-total').textContent = fmtBytes(total);
+      document.getElementById('sz-left').textContent = fmtBytes(left);
+      document.getElementById('sz-quota').textContent = pctTxt + '% of 1,024 MB used';
+      document.getElementById('kpi-dbsize').textContent = fmtBytes(left);
+      document.getElementById('kpi-dbsize-sub').textContent = fmtBytes(total) + ' used (' + pctTxt + '%)';
+
+      const fill = document.getElementById('quota-fill');
+      fill.style.width = Math.min(pct, 100) + '%';
+      document.getElementById('quota-caption').innerHTML =
+        '<b>' + fmtBytes(left) + '</b> left of 1 GB · ' + fmtBytes(total) + ' used';
+
+      const level = pct >= DANGER_PCT ? 'danger' : pct >= WARN_PCT ? 'warn' : '';
+      fill.className = 'quota-fill' + (level ? ' ' + level : '');
+      document.getElementById('kpi-dbsize').className = 'kpi-val' + (level ? ' ' + level : ' green');
+      document.getElementById('storage-badge').className = 'card-badge' + (level ? ' ' + level : '');
+      document.getElementById('storage-badge').textContent = level ? pct.toFixed(0) + '% used' : '1 GB free';
+
+      const alertEl = document.getElementById('storage-alert');
+      alertEl.className = 'storage-alert' + (level ? ' show ' + level : '');
+      if (level) {
+        document.getElementById('sa-icon').textContent = level === 'danger' ? '🚨' : '⚠️';
+        document.getElementById('sa-title').textContent =
+          level === 'danger' ? 'Storage almost full!' : 'Storage warning: ' + WARN_PCT + '% reached';
+        document.getElementById('sa-msg').textContent =
+          'Only ' + fmtBytes(left) + ' left of the 1 GB free quota. Delete old months in Admin → Database.';
+      }
+      bumpTime();
+    } catch (e) {
+      document.getElementById('quota-caption').textContent = 'Scan failed: ' + e.message;
+      document.getElementById('sz-quota').textContent = 'Scan failed';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔄 Re-scan storage';
+    }
+  }
+  scanStorage();
+  setInterval(scanStorage, 10 * 60 * 1000);
+
+  // ── Visitor chart ───────────────────────────────────────────
+  function initOrUpdateChart(dailyCounts, labels) {
+    const ctx = document.getElementById('visitorChart').getContext('2d');
+    if (visitorChart) {
+      visitorChart.data.labels = labels;
+      visitorChart.data.datasets[0].data = dailyCounts;
+      visitorChart.update();
+      return;
+    }
+    visitorChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Visitors',
+          data: dailyCounts,
+          backgroundColor: 'rgba(59,130,246,0.75)',
+          borderColor: '#2563eb',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' visitor' + (c.parsed.y !== 1 ? 's' : '') } }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#64748b', font: { size: 11, family: "'Nunito', sans-serif" }, autoSkip: false },
+            grid: { display: false },
+            border: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#64748b', font: { size: 11, family: "'Nunito', sans-serif" }, precision: 0, stepSize: 1 },
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            border: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // ── Visitors listener ───────────────────────────────────────
+  db.ref("visitors").on("value", snap => {
+    const visitors = snap.val() || {};
+    const allKeys = Object.keys(visitors);
+    const allTime = allKeys.length;
+
+    document.getElementById('kpi-visitors').textContent = allTime;
+    document.getElementById('cnt-visitors').textContent = allTime;
+    document.getElementById('visitors-alltime').textContent = allTime;
+
+    // Supports: firstSeen (YYYY-MM-DD) | lastSeen / ts / timestamp (ms)
+    function getDate(v) {
+      if (v && v.firstSeen) return String(v.firstSeen).slice(0, 10);
+      const ms = v && (v.lastSeen || v.ts || v.timestamp);
+      if (ms) return ymd(new Date(ms)); // FIX 2: local date
+      return null;
+    }
+
+    const todayStr = today();
+    const wStart = weekStart();
+    let countToday = 0;
+    let countWeek = 0;
+
+    const last7 = pastDays(7);
+    const dayCounts = {};
+    last7.forEach(d => { dayCounts[d] = 0; });
+
+    allKeys.forEach(k => {
+      const d = getDate(visitors[k]);
+      if (!d) return;
+      if (d === todayStr) countToday++;
+      if (d >= wStart) countWeek++;
+      if (dayCounts.hasOwnProperty(d)) dayCounts[d]++;
+    });
+
+    document.getElementById('visitors-today').textContent = countToday;
+    document.getElementById('visitors-week').textContent = countWeek;
+
+    initOrUpdateChart(last7.map(d => dayCounts[d]), last7.map(dayLabel));
+    document.getElementById('visitor-badge').textContent = countToday + ' today';
+  });
+
+  // ── Admin logins ────────────────────────────────────────────
+  function esc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // Admins currently signed in (written by admin.html)
+  db.ref("adminPresence").on("value", snap => {
+    const admins = Object.values(snap.val() || {});
+    const n = admins.length;
+    document.getElementById('admin-online').textContent = n;
+    document.getElementById('admin-badge').textContent = n + ' online';
+    document.getElementById('admin-list').innerHTML = n
+      ? admins.map(a => `<div class="user-item">
+          <div class="user-icon ui-admin">🔐</div>
+          <div>
+            <div class="user-name">${esc(a.name || 'Admin')}</div>
+            <div class="user-time">Last active ${a.lastActive ? fmtTime(a.lastActive) : '—'}</div>
+          </div>
+          <div class="ubadge ub-a">Admin</div>
+        </div>`).join('')
+      : '<div class="empty">No admins logged in</div>';
+  });
+
+  // Total admin logins recorded today
+  db.ref("adminLogins/" + today()).on("value", snap => {
+    document.getElementById('admin-today').textContent = snap.numChildren();
+  });
+
+  // ── Presence ────────────────────────────────────────────────
+  db.ref("presence").on("value", snap => {
+    const users = snap.val() || {};
+    const count = Object.keys(users).length;
+    document.getElementById('kpi-online').textContent = count;
+    document.getElementById('online-badge').textContent = count + ' online';
+    document.getElementById('cnt-sessions').textContent = count;
+
+    const list = document.getElementById('active-list');
+    if (!count) {
+      list.innerHTML = '<div class="empty">No active sessions</div>';
+      document.getElementById('mobile-pct').textContent = '0%';
+      document.getElementById('desktop-pct').textContent = '0%';
+      document.getElementById('bar-mobile').style.width = '0%';
+      document.getElementById('bar-desktop').style.width = '0%';
+    } else {
+      const entries = Object.values(users);
+      list.innerHTML = entries.map(u => {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(u.ua || '');
+        return `<div class="user-item">
+          <div class="user-icon ${isMobile ? 'ui-mobile' : 'ui-desktop'}">${isMobile ? '📱' : '💻'}</div>
+          <div>
+            <div class="user-name">${isMobile ? 'Mobile User' : 'Desktop User'}</div>
+            <div class="user-time">${u.lastActive ? fmtTime(u.lastActive) : '—'}</div>
+          </div>
+          <div class="ubadge ${isMobile ? 'ub-m' : 'ub-d'}">${isMobile ? 'Mobile' : 'Desktop'}</div>
+        </div>`;
+      }).join('');
+      const mCount = entries.filter(u => /iPhone|iPad|iPod|Android/i.test(u.ua || '')).length;
+      const mPct = Math.round((mCount / count) * 100);
+      document.getElementById('mobile-pct').textContent = mPct + '%';
+      document.getElementById('desktop-pct').textContent = (100 - mPct) + '%';
+      document.getElementById('bar-mobile').style.width = mPct + '%';
+      document.getElementById('bar-desktop').style.width = (100 - mPct) + '%';
+    }
+    bumpTime();
+  });
+
+  // ── Tickets (today only, live) ──────────────────────────────
+  db.ref("tickets").orderByChild("date").equalTo(today()).on("value", snap => {
+    let am = 0, pm = 0;
+    snap.forEach(c => { const t = c.val(); t.time === 'AM' ? am++ : pm++; });
+    const total = am + pm;
+    document.getElementById('kpi-tickets').textContent = total;
+    document.getElementById('kpi-tickets-sub').textContent = 'AM: ' + am + ' · PM: ' + pm;
+    document.getElementById('am-val').textContent = am;
+    document.getElementById('pm-val').textContent = pm;
+    const d = total || 1;
+    document.getElementById('split-am').style.width = ((am / d) * 100) + '%';
+    document.getElementById('split-pm').style.width = ((pm / d) * 100) + '%';
+  });
+
+  // ── takenNumbers (count only) ───────────────────────────────
+  db.ref("takenNumbers").on("value", snap => {
+    const data = snap.val() || {};
+    let entries = 0;
+    Object.values(data).forEach(d => { entries += Object.keys(d || {}).length; });
+    document.getElementById('cnt-taken').textContent = entries;
+  });
+</script>
+</body>
+</html>
