@@ -760,6 +760,7 @@ const ALLOWED_ADMIN_EMAILS=['tagumfti.admin@gmail.com'];
 const firebaseConfig = {
   apiKey: "AIzaSyCerH4-U-AJQeM0op5xa5XXU0c1vFSICB4",
   authDomain: "fti-queue-f29e9.firebaseapp.com",
+  databaseURL: "https://fti-queue-f29e9-default-rtdb.firebaseio.com",
   projectId: "fti-queue-f29e9",
   storageBucket: "fti-queue-f29e9.firebasestorage.app",
   messagingSenderId: "691384064945",
@@ -1376,12 +1377,14 @@ function handleSearchEnter() {
    }
  }
 
- function jumpToDate(ds) {
-   calSelectedDate = ds;
-   document.getElementById("search-results").style.display = "none";
-   document.getElementById("search-input").value = "";
-   onAdminDateSelected(ds);
- }
+function jumpToDate(ds) {
+  document.getElementById("search-results").style.display = "none";
+  document.getElementById("search-input").value = "";
+  const [y, m, d] = ds.split("-").map(Number);
+  calViewYear = y;
+  calViewMonth = m - 1;
+  calSelectDate(ds, d);
+}
 
  function doSearch() {
    const query = document.getElementById("search-input").value.trim();
@@ -1684,6 +1687,7 @@ function fmtBytes(b){
   if(b<1024*1024*1024)return(b/(1024*1024)).toFixed(2)+' MB';
   return(b/(1024*1024*1024)).toFixed(3)+' GB';
 }
+const readNode = n => db.ref(n).once('value').catch(() => null);
 async function calcStorage(){
   document.getElementById('db-used-label').textContent='Calculating…';
   document.getElementById('db-free-label').textContent='';
@@ -1691,11 +1695,11 @@ async function calcStorage(){
   document.getElementById('db-storage-fill').style.width='0%';
   ['tickets','slots','disabled','schedule'].forEach(k=>{document.getElementById('dbn-'+k+'-val').textContent='…';});
   try{
-    const[tickSnap,slotSnap,disSnap,schedSnap]=await Promise.all([
-      db.ref('tickets').once('value'),db.ref('slots').once('value'),
-      db.ref('disabledNumbers').once('value'),db.ref('scheduleSettings').once('value')
+        const[tickSnap,slotSnap,disSnap,schedSnap]=await Promise.all([
+      readNode('tickets'),readNode('slots'),readNode('disabledNumbers'),readNode('scheduleSettings')
     ]);
-    const tData=tickSnap.val()||{},sData=slotSnap.val()||{},dData=disSnap.val()||{},scData=schedSnap.val()||{};
+    const tData=(tickSnap&&tickSnap.val())||{},sData=(slotSnap&&slotSnap.val())||{},
+          dData=(disSnap&&disSnap.val())||{},scData=(schedSnap&&schedSnap.val())||{};
     const tBytes=roughSizeOf(tData),sBytes=roughSizeOf(sData),dBytes=roughSizeOf(dData),scBytes=roughSizeOf(scData);
     const totalBytes=tBytes+sBytes+dBytes+scBytes;
     const pct=Math.min((totalBytes/FB_FREE_STORAGE_BYTES)*100,100);
@@ -1725,11 +1729,11 @@ async function previewMonthDelete(){
   document.getElementById('delete-preview').style.display='none';
   document.getElementById('delete-done').style.display='none';
   document.getElementById('delete-progress').style.display='none';
-  const[tickSnap,slotSnap,disSnap,takenSnap]=await Promise.all([
-    db.ref('tickets').once('value'),db.ref('slots').once('value'),
-    db.ref('disabledNumbers').once('value'),db.ref('takenNumbers').once('value')
+    const[tickSnap,slotSnap,disSnap,takenSnap]=await Promise.all([
+    readNode('tickets'),readNode('slots'),readNode('disabledNumbers'),readNode('takenNumbers')
   ]);
-  const tickets=tickSnap.val()||{},slots=slotSnap.val()||{},disabled=disSnap.val()||{},taken=takenSnap.val()||{};
+  const tickets=(tickSnap&&tickSnap.val())||{},slots=(slotSnap&&slotSnap.val())||{},
+        disabled=(disSnap&&disSnap.val())||{},taken=(takenSnap&&takenSnap.val())||{};
   const matchTickets=Object.entries(tickets).filter(([k,t])=>t&&t.date&&t.date.startsWith(prefix));
   const matchSlots=Object.keys(slots).filter(d=>d.startsWith(prefix));
   const matchDisabled=Object.keys(disabled).filter(d=>d.startsWith(prefix));
@@ -1790,7 +1794,7 @@ async function deleteAllRecords(){
   document.getElementById('delete-progress-text').textContent='Deleting all records…';
   try{
     await Promise.all([
-      db.ref('tickets').remove(),db.ref('slots').remove(),
+      db.ref('tickets').remove(),db.ref('slots').remove().catch(()=>{}),
       db.ref('disabledNumbers').remove(),db.ref('takenNumbers').remove()
     ]);
     prog.style.display='none';
