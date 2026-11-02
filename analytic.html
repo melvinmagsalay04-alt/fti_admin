@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analytics — P20 DDN</title>
@@ -10,31 +11,19 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Nunito', sans-serif; background: #f1f5f9; color: #1e293b; }
 
-    .header {
-      background: linear-gradient(135deg, #1e3a5f, #2563eb);
-      padding: 16px 20px;
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    }
+    .header { background: linear-gradient(135deg, #1e3a5f, #2563eb); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .header-title { color: #fff; font-size: 16px; font-weight: 800; }
     .header-sub { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 1px; }
-    .btn-back {
-      padding: 7px 14px; background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
-      color: #fff; font-size: 13px; font-weight: 700;
-      text-decoration: none; white-space: nowrap; flex-shrink: 0;
-    }
+    .btn-back { padding: 7px 14px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; color: #fff; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
 
     .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; }
 
     .live-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; margin-bottom: 16px; }
     .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
 
-    .storage-alert {
-      display: none; align-items: flex-start; gap: 10px;
-      padding: 14px 16px; border-radius: 14px; margin-bottom: 14px;
-      font-size: 13px; line-height: 1.5; font-weight: 600;
-    }
+    .storage-alert { display: none; align-items: flex-start; gap: 10px; padding: 14px 16px; border-radius: 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.5; font-weight: 600; }
     .storage-alert.show { display: flex; }
     .storage-alert .sa-icon { font-size: 22px; line-height: 1; }
     .storage-alert b { display: block; font-size: 14px; font-weight: 800; }
@@ -51,10 +40,7 @@
     .kpi-sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
 
     .card { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
-    .card-head {
-      padding: 14px 16px 0; font-size: 13px; font-weight: 800; color: #1e293b;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    .card-head { padding: 14px 16px 0; font-size: 13px; font-weight: 800; color: #1e293b; display: flex; align-items: center; justify-content: space-between; }
     .card-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #eff6ff; color: #2563eb; }
     .card-badge.warn { background: #fef3c7; color: #92400e; }
     .card-badge.danger { background: #fee2e2; color: #991b1b; }
@@ -108,16 +94,13 @@
     .quota-legend { display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; font-weight: 700; margin-top: 4px; }
     .quota-caption { font-size: 12px; color: #64748b; margin-top: 8px; font-weight: 600; }
     .quota-caption b { color: #1e293b; }
+    .quota-note { font-size: 11px; color: #94a3b8; margin-top: 10px; line-height: 1.5; }
 
     .storage-total { margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: flex-start; }
     .storage-total-label { font-size: 12px; font-weight: 700; color: #64748b; }
     .storage-total-val { font-size: 16px; font-weight: 800; color: #1e3a5f; }
     .storage-quota { font-size: 11px; color: #94a3b8; margin-top: 2px; text-align: right; }
-    .btn-rescan {
-      margin-top: 14px; width: 100%; padding: 9px; border: 1px solid #e2e8f0;
-      background: #f8fafc; border-radius: 10px; font: 700 12px 'Nunito', sans-serif;
-      color: #475569; cursor: pointer;
-    }
+    .btn-rescan { margin-top: 14px; width: 100%; padding: 9px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 10px; font: 700 12px 'Nunito', sans-serif; color: #475569; cursor: pointer; }
     .btn-rescan:disabled { opacity: 0.6; cursor: default; }
 
     .counts-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
@@ -143,7 +126,7 @@
     <div class="header-title">📊 Analytics</div>
     <div class="header-sub">P20 DDN Control Number System</div>
   </div>
-  <a href="index.html" class="btn-back">← Admin</a>
+  <a href="admin.html" class="btn-back">← Admin</a>
 </div>
 
 <div class="wrap">
@@ -173,6 +156,7 @@
       <div class="kpi-label">Tickets Today</div>
       <div class="kpi-val" id="kpi-tickets">—</div>
       <div class="kpi-sub" id="kpi-tickets-sub">AM: — · PM: —</div>
+      <div class="kpi-sub" id="kpi-tickets-next">Next service day: —</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Storage Left</div>
@@ -293,7 +277,7 @@
         <div class="bar-track"><div class="bar-fill" id="sfill-schedule" style="background:#06b6d4; width:0%"></div></div>
       </div>
       <div class="bar-row">
-        <div class="bar-head"><span>other (dates, slots…)</span><span id="sz-other">—</span></div>
+        <div class="bar-head"><span>other (dates, queue, claims…)</span><span id="sz-other">—</span></div>
         <div class="bar-track"><div class="bar-fill" id="sfill-other" style="background:#64748b; width:0%"></div></div>
       </div>
 
@@ -308,7 +292,8 @@
           <div class="storage-quota" id="sz-quota">of 1,024 MB free quota</div>
         </div>
       </div>
-      <button class="btn-rescan" id="btn-rescan" onclick="scanStorage()">🔄 Re-scan storage</button>
+      <div class="quota-note">Updates live as data changes. This is an estimate from the size of your data; the exact billed figure is in Firebase console → Realtime Database → Usage.</div>
+      <button class="btn-rescan" id="btn-rescan" onclick="scanStorage()">🔄 Refresh now</button>
     </div>
 
     <div class="counts-grid">
@@ -323,33 +308,53 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCerH4-U-AJQeM0op5xa5XXU0c1vFSICB4",
-  authDomain: "fti-queue-f29e9.firebaseapp.com",
-  databaseURL: "https://fti-queue-f29e9-default-rtdb.firebaseio.com",
-  projectId: "fti-queue-f29e9",
-  storageBucket: "fti-queue-f29e9.firebasestorage.app",
-  messagingSenderId: "691384064945",
-  appId: "1:691384064945:web:c3ef376cf514ddb7413b90",
-  measurementId: "G-J7WN49EKJ3"
-};
+  const ADMIN_EMAIL = 'tagumfti.admin@gmail.com';
 
-  // FIX 1: initialise Firebase before using it
+  const firebaseConfig = {
+    apiKey: "AIzaSyCerH4-U-AJQeM0op5xa5XXU0c1vFSICB4",
+    authDomain: "fti-queue-f29e9.firebaseapp.com",
+    databaseURL: "https://fti-queue-f29e9-default-rtdb.firebaseio.com",
+    projectId: "fti-queue-f29e9",
+    storageBucket: "fti-queue-f29e9.firebasestorage.app",
+    messagingSenderId: "691384064945",
+    appId: "1:691384064945:web:c3ef376cf514ddb7413b90",
+    measurementId: "G-J7WN49EKJ3"
+  };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // ── Date helpers (FIX 2: local time instead of UTC) ─────────
-  function ymd(d) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return y + '-' + m + '-' + day;
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  function esc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, c =>
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-  function today() { return ymd(new Date()); }
-  function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
+
+  // ── Philippine time (UTC+8), corrected with Firebase server time ──
+  const PHT_MS = 8 * 3600 * 1000;
+  let serverOffset = 0;
+  db.ref('.info/serverTimeOffset').on('value', s => { serverOffset = s.val() || 0; checkDayChange(); });
+
+  function nowPHT() { return new Date(Date.now() + serverOffset + PHT_MS); }       // read with getUTC*()
+  function ymdPHT(d) { return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); }
+  function today() { return ymdPHT(nowPHT()); }
+  function addDays(ds, n) { const d = new Date(ds + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return ymdPHT(d); }
+  // Same rule as the home page: Fri → Mon, Sat → Mon, otherwise tomorrow
+  function targetDay() {
+    const dow = nowPHT().getUTCDay();
+    return addDays(today(), dow === 5 ? 3 : dow === 6 ? 2 : 1);
+  }
+  function msToDay(ms) { return ymdPHT(new Date(ms + PHT_MS)); }
+  function pastDays(n) { const t = today(), a = []; for (let i = n - 1; i >= 0; i--) a.push(addDays(t, -i)); return a; }
+  function weekStart() { const dow = nowPHT().getUTCDay(); return addDays(today(), dow === 0 ? -6 : 1 - dow); }
+  function dayLabel(ds) { return new Date(ds + 'T00:00:00Z').toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }); }
+  function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Manila' }); }
+  function bumpTime() { $('last-updated').textContent = 'Live · updated ' + fmtTime(Date.now() + serverOffset); }
+
   function estimateBytes(val) {
-    try { return new TextEncoder().encode(JSON.stringify(val)).length; } catch { return 0; }
+    try { return new TextEncoder().encode(JSON.stringify(val)).length; } catch (e) { return 0; }
   }
   function fmtBytes(b) {
     if (!b || b < 1) return '0 B';
@@ -359,38 +364,11 @@ const firebaseConfig = {
     return (b / (1024 * 1024 * 1024)).toFixed(3) + ' GB';
   }
 
-  // YYYY-MM-DD for each of the past N days (newest last)
-  function pastDays(n) {
-    const arr = [];
-    for (let i = n - 1; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      arr.push(ymd(d));
-    }
-    return arr;
-  }
-
-  // YYYY-MM-DD of Monday this week
-  function weekStart() {
-    const d = new Date();
-    const day = d.getDay(); // 0=Sun
-    d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
-    return ymd(d);
-  }
-
-  function dayLabel(dateStr) {
-    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' });
-  }
-
-  function bumpTime() {
-    document.getElementById('last-updated').textContent = 'Live · updated ' + fmtTime(Date.now());
-  }
-
-  // ── Storage scan ────────────────────────────────────────────
-  const FREE_QUOTA = 1024 * 1024 * 1024; // 1 GB free tier
-  const WARN_PCT = 50;
-  const DANGER_PCT = 80;
-  let visitorChart = null;
+  // ═══════════════════════════════════════════════════════════
+  // STORAGE (LIVE) — one listener per node, size recalculated on change
+  // ═══════════════════════════════════════════════════════════
+  const FREE_QUOTA = 1024 * 1024 * 1024;
+  const WARN_PCT = 50, DANGER_PCT = 80;
 
   const STORAGE_ROWS = {
     tickets:          ['sfill-tickets',  'sz-tickets'],
@@ -400,250 +378,291 @@ const firebaseConfig = {
     disabledNumbers:  ['sfill-disabled', 'sz-disabled'],
     scheduleSettings: ['sfill-schedule', 'sz-schedule']
   };
-  const OTHER_NODES = ['dateSettings', 'slotConfig', 'slots', 'adminPresence', 'adminLogins'];
+  // Counted in "other". Public paths first, admin-only paths are added after admin login.
+  const PUBLIC_NODES = [...Object.keys(STORAGE_ROWS), 'dateSettings', 'slotConfig',
+                        'queue/waiting', 'queue/active', 'queue/config'];
+  const ADMIN_NODES  = ['adminPresence', 'adminLogins', 'claims'];
 
-  async function scanStorage() {
-    const btn = document.getElementById('btn-rescan');
-    btn.disabled = true;
-    btn.textContent = '⏳ Scanning…';
-    try {
-      const names = [...Object.keys(STORAGE_ROWS), ...OTHER_NODES];
-      const snaps = await Promise.all(names.map(n => db.ref(n).once('value')));
-      const sizes = {};
-      let other = 0, total = 0;
+  const nodeBytes = {};
+  const denied = {};
+  const nodeWatchers = {};
+  let renderTimer = null;
 
-      snaps.forEach((s, i) => {
-        const n = names[i];
-        const b = s.exists() ? estimateBytes(s.val()) + n.length : 0;
-        total += b;
-        if (STORAGE_ROWS[n]) sizes[n] = b; else other += b;
-        if (n === 'tickets') document.getElementById('cnt-tickets').textContent = s.numChildren();
-      });
-
-      Object.entries(STORAGE_ROWS).forEach(([n, [fillId, szId]]) => {
-        document.getElementById(szId).textContent = fmtBytes(sizes[n]);
-        document.getElementById(fillId).style.width = (total ? sizes[n] / total * 100 : 0) + '%';
-      });
-      document.getElementById('sz-other').textContent = fmtBytes(other);
-      document.getElementById('sfill-other').style.width = (total ? other / total * 100 : 0) + '%';
-
-      const left = Math.max(FREE_QUOTA - total, 0);
-      const pct = total / FREE_QUOTA * 100;
-      const pctTxt = pct < 0.01 ? '<0.01' : pct.toFixed(2);
-
-      document.getElementById('sz-total').textContent = fmtBytes(total);
-      document.getElementById('sz-left').textContent = fmtBytes(left);
-      document.getElementById('sz-quota').textContent = pctTxt + '% of 1,024 MB used';
-      document.getElementById('kpi-dbsize').textContent = fmtBytes(left);
-      document.getElementById('kpi-dbsize-sub').textContent = fmtBytes(total) + ' used (' + pctTxt + '%)';
-
-      const fill = document.getElementById('quota-fill');
-      fill.style.width = Math.min(pct, 100) + '%';
-      document.getElementById('quota-caption').innerHTML =
-        '<b>' + fmtBytes(left) + '</b> left of 1 GB · ' + fmtBytes(total) + ' used';
-
-      const level = pct >= DANGER_PCT ? 'danger' : pct >= WARN_PCT ? 'warn' : '';
-      fill.className = 'quota-fill' + (level ? ' ' + level : '');
-      document.getElementById('kpi-dbsize').className = 'kpi-val' + (level ? ' ' + level : ' green');
-      document.getElementById('storage-badge').className = 'card-badge' + (level ? ' ' + level : '');
-      document.getElementById('storage-badge').textContent = level ? pct.toFixed(0) + '% used' : '1 GB free';
-
-      const alertEl = document.getElementById('storage-alert');
-      alertEl.className = 'storage-alert' + (level ? ' show ' + level : '');
-      if (level) {
-        document.getElementById('sa-icon').textContent = level === 'danger' ? '🚨' : '⚠️';
-        document.getElementById('sa-title').textContent =
-          level === 'danger' ? 'Storage almost full!' : 'Storage warning: ' + WARN_PCT + '% reached';
-        document.getElementById('sa-msg').textContent =
-          'Only ' + fmtBytes(left) + ' left of the 1 GB free quota. Delete old months in Admin → Database.';
+  function watchNode(n) {
+    if (nodeWatchers[n]) return;
+    const ref = db.ref(n);
+    const cb = s => {
+      nodeBytes[n] = s.exists() ? estimateBytes(s.val()) + n.length : 0;
+      delete denied[n];
+      if (n === 'tickets') $('cnt-tickets').textContent = s.numChildren();
+      if (n === 'takenNumbers') {
+        let c = 0;
+        s.forEach(d => { c += d.numChildren(); });
+        $('cnt-taken').textContent = c;
       }
-      bumpTime();
-    } catch (e) {
-      document.getElementById('quota-caption').textContent = 'Scan failed: ' + e.message;
-      document.getElementById('sz-quota').textContent = 'Scan failed';
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '🔄 Re-scan storage';
-    }
+      scheduleRender();
+    };
+    const err = e => {
+      console.warn('Storage listener denied:', n, e.message);
+      denied[n] = true; nodeBytes[n] = 0; delete nodeWatchers[n];
+      scheduleRender();
+    };
+    ref.on('value', cb, err);
+    nodeWatchers[n] = { ref, cb };
   }
-  scanStorage();
-  setInterval(scanStorage, 10 * 60 * 1000);
+  function unwatchNode(n) {
+    const w = nodeWatchers[n];
+    if (w) { w.ref.off('value', w.cb); delete nodeWatchers[n]; }
+    delete nodeBytes[n]; delete denied[n];
+  }
 
-  // ── Visitor chart ───────────────────────────────────────────
-  function initOrUpdateChart(dailyCounts, labels) {
-    const ctx = document.getElementById('visitorChart').getContext('2d');
+  function scheduleRender() { clearTimeout(renderTimer); renderTimer = setTimeout(renderStorage, 400); }
+  function scanStorage() { renderStorage(); }
+
+  function renderStorage() {
+    const sizes = {};
+    let other = 0, total = 0;
+    Object.keys(nodeBytes).forEach(n => {
+      const b = nodeBytes[n] || 0;
+      total += b;
+      if (STORAGE_ROWS[n]) sizes[n] = b; else other += b;
+    });
+
+    Object.entries(STORAGE_ROWS).forEach(([n, [fillId, szId]]) => {
+      const b = sizes[n] || 0;
+      $(szId).textContent = fmtBytes(b);
+      $(fillId).style.width = (total ? b / total * 100 : 0) + '%';
+    });
+    $('sz-other').textContent = fmtBytes(other);
+    $('sfill-other').style.width = (total ? other / total * 100 : 0) + '%';
+
+    const left = Math.max(FREE_QUOTA - total, 0);
+    const pct = total / FREE_QUOTA * 100;
+    const pctTxt = pct < 0.01 ? '<0.01' : pct.toFixed(2);
+
+    $('sz-total').textContent = fmtBytes(total);
+    $('sz-left').textContent = fmtBytes(left);
+    $('sz-quota').textContent = pctTxt + '% of 1,024 MB used';
+    $('kpi-dbsize').textContent = fmtBytes(left);
+    $('kpi-dbsize-sub').textContent = fmtBytes(total) + ' used (' + pctTxt + '%)';
+
+    const fill = $('quota-fill');
+    fill.style.width = Math.min(pct, 100) + '%';
+    const skipped = Object.keys(denied);
+    $('quota-caption').innerHTML = '🟢 Live · <b>' + fmtBytes(left) + '</b> left of 1 GB · ' + fmtBytes(total) + ' used' +
+      (skipped.length ? '<br>Not counted (no read access): ' + esc(skipped.join(', ')) : '');
+
+    const level = pct >= DANGER_PCT ? 'danger' : pct >= WARN_PCT ? 'warn' : '';
+    fill.className = 'quota-fill' + (level ? ' ' + level : '');
+    $('kpi-dbsize').className = 'kpi-val' + (level ? ' ' + level : ' green');
+    $('storage-badge').className = 'card-badge' + (level ? ' ' + level : '');
+    $('storage-badge').textContent = level ? pct.toFixed(0) + '% used' : '1 GB free';
+
+    const alertEl = $('storage-alert');
+    alertEl.className = 'storage-alert' + (level ? ' show ' + level : '');
+    if (level) {
+      $('sa-icon').textContent = level === 'danger' ? '🚨' : '⚠️';
+      $('sa-title').textContent = level === 'danger' ? 'Storage almost full!' : 'Storage warning: ' + WARN_PCT + '% reached';
+      $('sa-msg').textContent = 'Only ' + fmtBytes(left) + ' left of the 1 GB free quota. Delete old months in Admin → Database.';
+    }
+    bumpTime();
+  }
+
+  PUBLIC_NODES.forEach(watchNode);
+
+  // ═══════════════════════════════════════════════════════════
+  // VISITORS
+  // ═══════════════════════════════════════════════════════════
+  let visitorChart = null;
+  let visitorsData = {};
+
+  function initOrUpdateChart(counts, labels) {
+    if (typeof Chart === 'undefined') return;
     if (visitorChart) {
       visitorChart.data.labels = labels;
-      visitorChart.data.datasets[0].data = dailyCounts;
+      visitorChart.data.datasets[0].data = counts;
       visitorChart.update();
       return;
     }
-    visitorChart = new Chart(ctx, {
+    visitorChart = new Chart($('visitorChart').getContext('2d'), {
       type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Visitors',
-          data: dailyCounts,
-          backgroundColor: 'rgba(59,130,246,0.75)',
-          borderColor: '#2563eb',
-          borderWidth: 1,
-          borderRadius: 6
-        }]
-      },
+      data: { labels, datasets: [{ label: 'Visitors', data: counts, backgroundColor: 'rgba(59,130,246,0.75)', borderColor: '#2563eb', borderWidth: 1, borderRadius: 6 }] },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' visitor' + (c.parsed.y !== 1 ? 's' : '') } }
-        },
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' visitor' + (c.parsed.y !== 1 ? 's' : '') } } },
         scales: {
-          x: {
-            ticks: { color: '#64748b', font: { size: 11, family: "'Nunito', sans-serif" }, autoSkip: false },
-            grid: { display: false },
-            border: { display: false }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#64748b', font: { size: 11, family: "'Nunito', sans-serif" }, precision: 0, stepSize: 1 },
-            grid: { color: 'rgba(0,0,0,0.05)' },
-            border: { display: false }
-          }
+          x: { ticks: { color: '#64748b', font: { size: 11, family: "'Nunito', sans-serif" }, autoSkip: false }, grid: { display: false }, border: { display: false } },
+          y: { beginAtZero: true, ticks: { color: '#64748b', font: { size: 11, family: "'Nunito', sans-serif" }, precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false } }
         }
       }
     });
   }
 
-  // ── Visitors listener ───────────────────────────────────────
-  db.ref("visitors").on("value", snap => {
-    const visitors = snap.val() || {};
-    const allKeys = Object.keys(visitors);
-    const allTime = allKeys.length;
-
-    document.getElementById('kpi-visitors').textContent = allTime;
-    document.getElementById('cnt-visitors').textContent = allTime;
-    document.getElementById('visitors-alltime').textContent = allTime;
-
-    // Supports: firstSeen (YYYY-MM-DD) | lastSeen / ts / timestamp (ms)
-    function getDate(v) {
-      if (v && v.firstSeen) return String(v.firstSeen).slice(0, 10);
-      const ms = v && (v.lastSeen || v.ts || v.timestamp);
-      if (ms) return ymd(new Date(ms)); // FIX 2: local date
-      return null;
-    }
-
-    const todayStr = today();
-    const wStart = weekStart();
-    let countToday = 0;
-    let countWeek = 0;
-
-    const last7 = pastDays(7);
-    const dayCounts = {};
-    last7.forEach(d => { dayCounts[d] = 0; });
-
-    allKeys.forEach(k => {
-      const d = getDate(visitors[k]);
-      if (!d) return;
-      if (d === todayStr) countToday++;
-      if (d >= wStart) countWeek++;
-      if (dayCounts.hasOwnProperty(d)) dayCounts[d]++;
-    });
-
-    document.getElementById('visitors-today').textContent = countToday;
-    document.getElementById('visitors-week').textContent = countWeek;
-
-    initOrUpdateChart(last7.map(d => dayCounts[d]), last7.map(dayLabel));
-    document.getElementById('visitor-badge').textContent = countToday + ' today';
-  });
-
-  // ── Admin logins ────────────────────────────────────────────
-  function esc(t) {
-    return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function visitorDay(v) {
+    if (!v) return null;
+    if (v.firstSeen) return String(v.firstSeen).slice(0, 10);
+    const ms = v.firstVisit || v.lastSeen || v.ts || v.timestamp;
+    return typeof ms === 'number' ? msToDay(ms) : null;
   }
 
-  // Admins currently signed in (written by admin.html)
-  db.ref("adminPresence").on("value", snap => {
-    const admins = Object.values(snap.val() || {});
-    const n = admins.length;
-    document.getElementById('admin-online').textContent = n;
-    document.getElementById('admin-badge').textContent = n + ' online';
-    document.getElementById('admin-list').innerHTML = n
-      ? admins.map(a => `<div class="user-item">
-          <div class="user-icon ui-admin">🔐</div>
-          <div>
-            <div class="user-name">${esc(a.name || 'Admin')}</div>
-            <div class="user-time">Last active ${a.lastActive ? fmtTime(a.lastActive) : '—'}</div>
-          </div>
-          <div class="ubadge ub-a">Admin</div>
-        </div>`).join('')
-      : '<div class="empty">No admins logged in</div>';
-  });
+  function renderVisitors() {
+    const keys = Object.keys(visitorsData);
+    const total = keys.length;
+    $('kpi-visitors').textContent = total;
+    $('cnt-visitors').textContent = total;
+    $('visitors-alltime').textContent = total;
 
-  // Total admin logins recorded today
-  db.ref("adminLogins/" + today()).on("value", snap => {
-    document.getElementById('admin-today').textContent = snap.numChildren();
-  });
+    const t = today(), wk = weekStart(), last7 = pastDays(7), perDay = {};
+    last7.forEach(d => perDay[d] = 0);
+    let cToday = 0, cWeek = 0;
+    keys.forEach(k => {
+      const d = visitorDay(visitorsData[k]);
+      if (!d) return;
+      if (d === t) cToday++;
+      if (d >= wk && d <= t) cWeek++;
+      if (d in perDay) perDay[d]++;
+    });
+    $('visitors-today').textContent = cToday;
+    $('visitors-week').textContent = cWeek;
+    $('visitor-badge').textContent = cToday + ' today';
+    initOrUpdateChart(last7.map(d => perDay[d]), last7.map(dayLabel));
+  }
 
-  // ── Presence ────────────────────────────────────────────────
-  db.ref("presence").on("value", snap => {
+  db.ref('visitors').on('value', s => { visitorsData = s.val() || {}; renderVisitors(); },
+    e => { console.warn('visitors denied', e.message); $('visitor-badge').textContent = 'No access'; });
+
+  // ═══════════════════════════════════════════════════════════
+  // PRESENCE (active sessions)
+  // ═══════════════════════════════════════════════════════════
+  const isMobileUA = ua => /iPhone|iPad|iPod|Android/i.test(ua || '');
+
+  db.ref('presence').on('value', snap => {
     const users = snap.val() || {};
-    const count = Object.keys(users).length;
-    document.getElementById('kpi-online').textContent = count;
-    document.getElementById('online-badge').textContent = count + ' online';
-    document.getElementById('cnt-sessions').textContent = count;
+    const entries = Object.values(users);
+    const count = entries.length;
+    $('kpi-online').textContent = count;
+    $('online-badge').textContent = count + ' online';
+    $('cnt-sessions').textContent = count;
 
-    const list = document.getElementById('active-list');
     if (!count) {
-      list.innerHTML = '<div class="empty">No active sessions</div>';
-      document.getElementById('mobile-pct').textContent = '0%';
-      document.getElementById('desktop-pct').textContent = '0%';
-      document.getElementById('bar-mobile').style.width = '0%';
-      document.getElementById('bar-desktop').style.width = '0%';
+      $('active-list').innerHTML = '<div class="empty">No active sessions</div>';
+      $('mobile-pct').textContent = '0%'; $('desktop-pct').textContent = '0%';
+      $('bar-mobile').style.width = '0%'; $('bar-desktop').style.width = '0%';
     } else {
-      const entries = Object.values(users);
-      list.innerHTML = entries.map(u => {
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(u.ua || '');
-        return `<div class="user-item">
-          <div class="user-icon ${isMobile ? 'ui-mobile' : 'ui-desktop'}">${isMobile ? '📱' : '💻'}</div>
-          <div>
-            <div class="user-name">${isMobile ? 'Mobile User' : 'Desktop User'}</div>
-            <div class="user-time">${u.lastActive ? fmtTime(u.lastActive) : '—'}</div>
-          </div>
-          <div class="ubadge ${isMobile ? 'ub-m' : 'ub-d'}">${isMobile ? 'Mobile' : 'Desktop'}</div>
-        </div>`;
+      $('active-list').innerHTML = entries.map(u => {
+        const m = isMobileUA(u.ua);
+        return '<div class="user-item">' +
+          '<div class="user-icon ' + (m ? 'ui-mobile' : 'ui-desktop') + '">' + (m ? '📱' : '💻') + '</div>' +
+          '<div><div class="user-name">' + (m ? 'Mobile User' : 'Desktop User') + '</div>' +
+          '<div class="user-time">' + (u.lastActive ? fmtTime(u.lastActive) : '—') + '</div></div>' +
+          '<div class="ubadge ' + (m ? 'ub-m' : 'ub-d') + '">' + (m ? 'Mobile' : 'Desktop') + '</div></div>';
       }).join('');
-      const mCount = entries.filter(u => /iPhone|iPad|iPod|Android/i.test(u.ua || '')).length;
-      const mPct = Math.round((mCount / count) * 100);
-      document.getElementById('mobile-pct').textContent = mPct + '%';
-      document.getElementById('desktop-pct').textContent = (100 - mPct) + '%';
-      document.getElementById('bar-mobile').style.width = mPct + '%';
-      document.getElementById('bar-desktop').style.width = (100 - mPct) + '%';
+      const mPct = Math.round(entries.filter(u => isMobileUA(u.ua)).length / count * 100);
+      $('mobile-pct').textContent = mPct + '%';
+      $('desktop-pct').textContent = (100 - mPct) + '%';
+      $('bar-mobile').style.width = mPct + '%';
+      $('bar-desktop').style.width = (100 - mPct) + '%';
     }
     bumpTime();
+  }, e => { console.warn('presence denied', e.message); $('active-list').innerHTML = '<div class="empty">No read access to presence</div>'; });
+
+  // ═══════════════════════════════════════════════════════════
+  // TICKETS — today's service date and the next service day
+  // ═══════════════════════════════════════════════════════════
+  let tkQueries = [];
+  function watchTickets() {
+    tkQueries.forEach(q => q.off());
+    tkQueries = [];
+    const t = today(), nx = targetDay();
+
+    const qToday = db.ref('tickets').orderByChild('date').equalTo(t);
+    qToday.on('value', snap => {
+      let am = 0, pm = 0;
+      snap.forEach(c => { c.val().time === 'AM' ? am++ : pm++; });
+      const total = am + pm, d = total || 1;
+      $('kpi-tickets').textContent = total;
+      $('kpi-tickets-sub').textContent = 'AM: ' + am + ' · PM: ' + pm;
+      $('am-val').textContent = am; $('pm-val').textContent = pm;
+      $('split-am').style.width = (am / d * 100) + '%';
+      $('split-pm').style.width = (pm / d * 100) + '%';
+    }, e => console.warn('tickets(today) denied', e.message));
+
+    const qNext = db.ref('tickets').orderByChild('date').equalTo(nx);
+    qNext.on('value', snap => {
+      $('kpi-tickets-next').textContent = 'Next service day (' + nx.slice(5) + '): ' + snap.numChildren();
+    }, e => console.warn('tickets(next) denied', e.message));
+
+    tkQueries = [qToday, qNext];
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ADMIN (needs admin login) — presence, logins today, extra storage nodes
+  // ═══════════════════════════════════════════════════════════
+  let isAdmin = false;
+  let adminPresRef = null, adminPresCb = null, adminLoginRef = null;
+
+  function watchAdminLogins() {
+    if (adminLoginRef) { adminLoginRef.off(); adminLoginRef = null; }
+    if (!isAdmin) return;
+    adminLoginRef = db.ref('adminLogins/' + today());
+    adminLoginRef.on('value', s => { $('admin-today').textContent = s.numChildren(); },
+      e => console.warn('adminLogins denied', e.message));
+  }
+
+  function startAdmin() {
+    adminPresRef = db.ref('adminPresence');
+    adminPresCb = snap => {
+      const admins = Object.values(snap.val() || {});
+      const n = admins.length;
+      $('admin-online').textContent = n;
+      $('admin-badge').textContent = n + ' online';
+      $('admin-list').innerHTML = n
+        ? admins.map(a => '<div class="user-item"><div class="user-icon ui-admin">🔐</div><div>' +
+            '<div class="user-name">' + esc(a.name || 'Admin') + '</div>' +
+            '<div class="user-time">Last active ' + (a.lastActive ? fmtTime(a.lastActive) : '—') + '</div></div>' +
+            '<div class="ubadge ub-a">Admin</div></div>').join('')
+        : '<div class="empty">No admins logged in</div>';
+    };
+    adminPresRef.on('value', adminPresCb, e => {
+      console.warn('adminPresence denied', e.message);
+      $('admin-list').innerHTML = '<div class="empty">No read access to adminPresence (check rules)</div>';
+    });
+    watchAdminLogins();
+    ADMIN_NODES.forEach(watchNode);
+  }
+
+  function stopAdmin() {
+    if (adminPresRef) { adminPresRef.off('value', adminPresCb); adminPresRef = null; }
+    if (adminLoginRef) { adminLoginRef.off(); adminLoginRef = null; }
+    ADMIN_NODES.forEach(unwatchNode);
+    $('admin-online').textContent = '—';
+    $('admin-today').textContent = '—';
+    $('admin-badge').textContent = 'locked';
+    $('admin-list').innerHTML = '<div class="empty">Log in on the Admin page first, then reload this page</div>';
+    scheduleRender();
+  }
+
+  firebase.auth().onAuthStateChanged(user => {
+    const ok = !!user && user.email === ADMIN_EMAIL;
+    if (ok === isAdmin) { if (!ok) stopAdmin(); return; }
+    isAdmin = ok;
+    ok ? startAdmin() : stopAdmin();
   });
 
-  // ── Tickets (today only, live) ──────────────────────────────
-  db.ref("tickets").orderByChild("date").equalTo(today()).on("value", snap => {
-    let am = 0, pm = 0;
-    snap.forEach(c => { const t = c.val(); t.time === 'AM' ? am++ : pm++; });
-    const total = am + pm;
-    document.getElementById('kpi-tickets').textContent = total;
-    document.getElementById('kpi-tickets-sub').textContent = 'AM: ' + am + ' · PM: ' + pm;
-    document.getElementById('am-val').textContent = am;
-    document.getElementById('pm-val').textContent = pm;
-    const d = total || 1;
-    document.getElementById('split-am').style.width = ((am / d) * 100) + '%';
-    document.getElementById('split-pm').style.width = ((pm / d) * 100) + '%';
-  });
-
-  // ── takenNumbers (count only) ───────────────────────────────
-  db.ref("takenNumbers").on("value", snap => {
-    const data = snap.val() || {};
-    let entries = 0;
-    Object.values(data).forEach(d => { entries += Object.keys(d || {}).length; });
-    document.getElementById('cnt-taken').textContent = entries;
-  });
+  // ═══════════════════════════════════════════════════════════
+  // Day rollover (midnight PHT): re-bind date-based queries and recompute
+  // ═══════════════════════════════════════════════════════════
+  let currentDay = null;
+  function checkDayChange() {
+    const t = today();
+    if (t === currentDay) return;
+    currentDay = t;
+    watchTickets();
+    watchAdminLogins();
+    renderVisitors();
+  }
+  checkDayChange();
+  setInterval(checkDayChange, 30000);
 </script>
 </body>
 </html>
