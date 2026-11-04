@@ -384,6 +384,14 @@ input:checked     + .slider:before { transform: translateX(26px); }
 }
 .btn-configure-slots:hover { background: #1d4ed8; transform: translateY(-1px); }
 
+.limited-section { margin-top:14px; padding-top:14px; border-top:1.5px dashed #fca5a5; }
+.limited-section-title { font-size:13px; font-weight:800; color:#b91c1c; margin-bottom:8px; }
+.limited-badge { display:inline-flex; align-items:center; gap:6px; background:#fee2e2; border:1.5px solid #fca5a5; color:#991b1b; padding:5px 12px; border-radius:20px; font-size:13px; font-weight:700; margin-right:6px; }
+.limited-save-btn { padding:8px 16px; background:#dc2626; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:Nunito,sans-serif; }
+.limited-save-btn:hover { background:#b91c1c; }
+.limited-open-btn { padding:5px 12px; background:#dcfce7; color:#166534; border:1.5px solid #86efac; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:Nunito,sans-serif; }
+.limited-open-btn:hover { background:#16a34a; color:#fff; }
+
 /* ══════════════════════════════════
    SLOT CONFIG MODAL
 ══════════════════════════════════ */
