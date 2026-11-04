@@ -293,6 +293,16 @@
     </div>
 
     <!-- Holiday Section -->
+    <div class="limited-section">
+  <div class="limited-section-title">🔴 Limited Slot for this Date</div>
+  <div id="limited-display" style="display:none;margin-bottom:8px;">
+    <span class="limited-badge">🔴 Closed — waiting for opening</span>
+    <button class="limited-open-btn" onclick="openLimited()">✔ Open Now</button>
+  </div>
+  <button id="limited-close-btn" class="limited-save-btn" onclick="closeLimited()">🔴 Set as Limited Slot (Close)</button>
+  <div class="holiday-hint">Users cannot book this date until you press "Open Now".</div>
+</div>
+    
     <div class="holiday-section">
       <div class="holiday-section-title">🎉 Holiday for this Date</div>
 
@@ -1859,7 +1869,7 @@ function renderAdminCal(){
     const c=document.createElement('div');
     c.textContent=d;
 
-    if(isHol || isFullyClosed) {
+    if(isHol || isFullyClosed || _ds.limited) {
       cls+=' holiday';
       c.style.cssText='background:#fee2e2!important;color:#991b1b!important;border:1.5px solid #fca5a5!important;font-weight:700;';
       if(isSel) c.style.cssText='background:#dc2626!important;color:#fff!important;border:1.5px solid #dc2626!important;font-weight:700;';
@@ -1914,6 +1924,7 @@ function calNextMonth(){ calViewMonth++;if(calViewMonth>11){calViewMonth=0;calVi
 
 // ── calSelectDate — auto-loads date and shows per-date settings panel ──────────
 function calSelectDate(key, d){
+  showLimitUI(!!ds.limited);
   calSelectedDate = key;
 
   // Update selected bar
@@ -2021,6 +2032,20 @@ async function removeHoliday(){
   document.getElementById('holiday-input').value = '';
   await saveHoliday();
 }
+  function showLimitUI(on) {
+  document.getElementById('limited-display').style.display = on ? 'block' : 'none';
+  document.getElementById('limited-close-btn').style.display = on ? 'none' : 'inline-block';
+}
+async function setLimited(on) {
+  if (!calSelectedDate) { toast('⚠ Select a date first'); return; }
+  try {
+    await db.ref('dateSettings/' + calSelectedDate).update({ limited: on ? true : null });
+    showLimitUI(on);
+    toast(on ? '🔴 Limited slot: date closed' : '✅ Date opened');
+  } catch (e) { toast('❌ Error: ' + e.message); }
+}
+const closeLimited = () => setLimited(true);
+const openLimited = () => setLimited(false);
 
 // Initialize calendar immediately (before Firebase auth)
 renderAdminCal();
