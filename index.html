@@ -312,7 +312,7 @@
       <div class="holiday-hint">Leave blank and save to remove the holiday label from this date.</div>
     </div>
 
-        <div class="limited-section">
+    <div class="limited-section">
   <div class="limited-section-title">🔴 Limited Slot for this Date</div>
   <div id="limited-display" style="display:none;margin-bottom:8px;">
     <span class="limited-badge">🔴 Closed — waiting for opening</span>
@@ -1924,7 +1924,6 @@ function calNextMonth(){ calViewMonth++;if(calViewMonth>11){calViewMonth=0;calVi
 
 // ── calSelectDate — auto-loads date and shows per-date settings panel ──────────
 function calSelectDate(key, d){
-  showLimitUI(!!ds.limited);
   calSelectedDate = key;
 
   // Update selected bar
@@ -1979,6 +1978,7 @@ function calSelectDate(key, d){
   // Auto-load data for the selected date
   loadDate();
   renderAdminCal();
+  showLimitUI(!!ds.limited);
 }
 
 // ── Per-date AM/PM toggle handler ─────────────────────────────────────────────
