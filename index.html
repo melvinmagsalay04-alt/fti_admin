@@ -293,15 +293,6 @@
     </div>
 
     <!-- Holiday Section -->
-    <div class="limited-section">
-  <div class="limited-section-title">🔴 Limited Slot for this Date</div>
-  <div id="limited-display" style="display:none;margin-bottom:8px;">
-    <span class="limited-badge">🔴 Closed — waiting for opening</span>
-    <button class="limited-open-btn" onclick="openLimited()">✔ Open Now</button>
-  </div>
-  <button id="limited-close-btn" class="limited-save-btn" onclick="closeLimited()">🔴 Set as Limited Slot (Close)</button>
-  <div class="holiday-hint">Users cannot book this date until you press "Open Now".</div>
-    
     <div class="holiday-section">
       <div class="holiday-section-title">🎉 Holiday for this Date</div>
 
@@ -320,6 +311,16 @@
       </div>
       <div class="holiday-hint">Leave blank and save to remove the holiday label from this date.</div>
     </div>
+
+        <div class="limited-section">
+  <div class="limited-section-title">🔴 Limited Slot for this Date</div>
+  <div id="limited-display" style="display:none;margin-bottom:8px;">
+    <span class="limited-badge">🔴 Closed — waiting for opening</span>
+    <button class="limited-open-btn" onclick="openLimited()">✔ Open Now</button>
+  </div>
+  <button id="limited-close-btn" class="limited-save-btn" onclick="closeLimited()">🔴 Set as Limited Slot (Close)</button>
+  <div class="holiday-hint">Users cannot book this date until you press "Open Now".</div>
+  </div>
 
     <!-- Status message -->
     <div class="date-status-msg" id="admin-session-status"></div>
