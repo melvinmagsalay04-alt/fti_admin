@@ -249,6 +249,40 @@
   <!-- ── Per-Date Settings Panel (shown after selecting a date) ─ -->
   <div class="section-card" style="padding:1.25rem;margin-top:0;" id="date-settings-panel">
 
+    <div class="section-card" style="padding:1.25rem;">
+  <div class="toggle-row state-off" id="perdate-row">
+    <div class="toggle-label-group">
+      <div class="toggle-main-label" id="perdate-label">Per-Date Slots: OFF</div>
+      <div class="toggle-sub-label">When ON, you can set how many AM/PM slots are open on each date. When OFF, every date uses the default slot configuration.</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="tgl-perdate" onchange="savePerDateSlots(this.checked)">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div id="date-slot-fields" style="display:none;margin-top:14px;">
+    <div class="holiday-section-title">🔢 Slots for this Date
+      <span id="slot-date-label" style="font-weight:700;color:#2563eb;margin-left:6px;"></span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+      <div style="flex:1;min-width:120px;">
+        <div class="dti-sub" style="margin-bottom:4px;">🌅 AM slots</div>
+        <input type="number" id="date-am-count" min="1" max="500" placeholder="default"
+          style="width:100%;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;font-family:Nunito,sans-serif;"/>
+      </div>
+      <div style="flex:1;min-width:120px;">
+        <div class="dti-sub" style="margin-bottom:4px;">🌇 PM slots</div>
+        <input type="number" id="date-pm-count" min="1" max="500" placeholder="default"
+          style="width:100%;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13px;font-family:Nunito,sans-serif;"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="holiday-save-btn" onclick="saveDateSlots()">💾 Save Slots</button>
+      <button class="holiday-remove-btn" style="padding:8px 14px;font-size:13px;" onclick="clearDateSlots()">↺ Use default</button>
+    </div>
+    <div class="holiday-hint" id="date-slot-hint" style="margin-top:6px;"></div>
+  </div>
+</div>
+
     <div class="date-panel-header">
       <div>
         <div class="date-panel-title">📅 Date Settings</div>
@@ -266,7 +300,7 @@
     <input type="checkbox" id="tgl-date-select" onchange="saveDateSelect(this.checked)">
     <span class="slider"></span>
   </label>
-</div>
+</div>  
 
     <!-- AM Toggle -->
     <div class="date-toggle-row">
@@ -814,9 +848,25 @@ function buildNumbers(startNum,count,type){
   while(nums.length<count){nums.push(n);n+=(type==='all')?1:2;}
   return nums;
 }
-function getAmNumbers(){return buildNumbers(slotConfig.amStart,slotConfig.amCount,slotConfig.amType);}
-function getPmNumbers(){return buildNumbers(slotConfig.pmStart,slotConfig.pmCount,slotConfig.pmType);}
-function getTotalSlots(){return slotConfig.amCount+slotConfig.pmCount;}
+function getDayConfig(dateStr){
+  const on=scheduleSettings.perDateSlotsEnabled===true;
+  const ds=(on&&dateStr&&calDateSettings[dateStr])||{};
+  const num=(v,d)=>v!==undefined&&v!==null&&v!==''&&isFinite(Number(v))?Number(v):d;
+  const cfg={
+    amCount:num(ds.amCount,slotConfig.amCount),amStart:num(ds.amStart,slotConfig.amStart),amType:ds.amType||slotConfig.amType,
+    pmCount:num(ds.pmCount,slotConfig.pmCount),pmStart:num(ds.pmStart,slotConfig.pmStart),pmType:ds.pmType||slotConfig.pmType
+  };
+  if(on&&ds.amCount!=null&&ds.pmStart==null){
+    const am=buildNumbers(cfg.amStart,cfg.amCount,cfg.amType);
+    const last=am.length?am[am.length-1]:0;
+    if(last>=cfg.pmStart)cfg.pmStart=last+1;
+  }
+  return cfg;
+}
+function getAmNumbers(d){const c=getDayConfig(d===undefined?currentDate:d);return buildNumbers(c.amStart,c.amCount,c.amType);}
+function getPmNumbers(d){const c=getDayConfig(d===undefined?currentDate:d);return buildNumbers(c.pmStart,c.pmCount,c.pmType);}
+
+  function getTotalSlots(){return slotConfig.amCount+slotConfig.pmCount;}
 function typeLabel(type){return type==='odd'?'odd':type==='even'?'even':'all';}
 function buildPreviewText(startNum,count,type){
   const nums=buildNumbers(startNum,count,type);
@@ -826,7 +876,7 @@ function buildPreviewText(startNum,count,type){
   return'#'+nums[0]+', #'+(nums[1]||'')+(nums[2]?', #'+nums[2]:'')+dots+'  ('+count+' slots)';
 }
 function updateScbSummary(){
-  const amNums=getAmNumbers(),pmNums=getPmNumbers();
+  const amNums=getAmNumbers(null),pmNums=getPmNumbers(null);
   const amLast=amNums.length?amNums[amNums.length-1]:'?';
   const pmLast=pmNums.length?pmNums[pmNums.length-1]:'?';
   document.getElementById('scb-summary').textContent=
@@ -837,15 +887,13 @@ function updateScbSummary(){
     '  |  Total: '+getTotalSlots()+' slots';
 }
 function updateGridTitles(){
+  const c=getDayConfig(currentDate);
   const amNums=getAmNumbers(),pmNums=getPmNumbers();
   const amLast=amNums.length?amNums[amNums.length-1]:'?';
   const pmLast=pmNums.length?pmNums[pmNums.length-1]:'?';
-  document.getElementById('grid-am-title').textContent=
-    '🌅 AM — '+(slotConfig.amType==='odd'?'Odd ':slotConfig.amType==='even'?'Even ':'All ')+
-    'Numbers '+slotConfig.amStart+' to '+amLast;
-  document.getElementById('grid-pm-title').textContent=
-    '🌇 PM — '+(slotConfig.pmType==='odd'?'Odd ':slotConfig.pmType==='even'?'Even ':'All ')+
-    'Numbers '+slotConfig.pmStart+' to '+pmLast;
+  const tl=t=>t==='odd'?'Odd ':t==='even'?'Even ':'All ';
+  document.getElementById('grid-am-title').textContent='🌅 AM — '+tl(c.amType)+'Numbers '+c.amStart+' to '+amLast;
+  document.getElementById('grid-pm-title').textContent='🌇 PM — '+tl(c.pmType)+'Numbers '+c.pmStart+' to '+pmLast;
 }
 
 // live sync of the switch
@@ -861,6 +909,22 @@ function saveDateSelect(on) {
   db.ref("scheduleSettings/dateSelectEnabled")
     .set(on)
     .then(() => toast(on ? "✅ Claimants can now choose a date" : "Date selection turned off"))
+    .catch(() => toast("Error saving. Try again."));
+}
+
+  db.ref("scheduleSettings/perDateSlotsEnabled").on("value", (s) => {
+  const on = s.val() === true;
+  scheduleSettings.perDateSlotsEnabled = on;
+  document.getElementById("tgl-perdate").checked = on;
+  document.getElementById("perdate-row").className = "toggle-row " + (on ? "state-on" : "state-off");
+  document.getElementById("perdate-label").textContent = "Per-Date Slots: " + (on ? "ON" : "OFF");
+  document.getElementById("date-slot-fields").style.display = on ? "" : "none";
+  updateDateSlotHint();
+  if (currentDate) { updateGridTitles(); refreshStats(); renderGrid(); }
+});
+function savePerDateSlots(on) {
+  db.ref("scheduleSettings/perDateSlotsEnabled").set(on)
+    .then(() => toast(on ? "✅ Per-date slots ON" : "Per-date slots OFF — using default slots"))
     .catch(() => toast("Error saving. Try again."));
 }
 
@@ -1067,6 +1131,8 @@ function initAdmin(){
     Object.entries(calDateSettings).forEach(([date, val]) => {
       if(val && val.holiday) calHolidays[date] = val.holiday;
     });
+    updateDateSlotHint();
+    if(currentDate){updateGridTitles();refreshStats();renderGrid();}
     renderAdminCal();
   });
 
@@ -1238,8 +1304,9 @@ async function loadDate(){
 }
 
 function refreshStats(){
-  const amNums=new Set(getAmNumbers());
-  const pmNums=new Set(getPmNumbers());
+  const cfg=getDayConfig(currentDate);
+  const amArr=getAmNumbers(),pmArr=getPmNumbers();
+  const amNums=new Set(amArr),pmNums=new Set(pmArr);
   const takenFromTickets=new Set(ticketsForDate.map(t=>t.number));
   const takenFromAtomic=new Set(Object.keys(takenNumbersData[currentDate]||{}).map(Number));
   const allTaken=new Set([...takenFromTickets,...takenFromAtomic]);
@@ -1248,20 +1315,20 @@ function refreshStats(){
   const tot=amTaken+pmTaken;
   const df=disabledNums[currentDate]||{};
   const dc=Object.entries(df).filter(([n,v])=>v&&(amNums.has(parseInt(n))||pmNums.has(parseInt(n)))).length;
-  const total=getTotalSlots();
+  const total=cfg.amCount+cfg.pmCount;
   document.getElementById('s-total').textContent=tot;
   document.getElementById('s-am').textContent=amTaken;
   document.getElementById('s-pm').textContent=pmTaken;
   document.getElementById('s-avail').textContent=total-tot-dc;
   document.getElementById('s-dis').textContent=dc;
   document.getElementById('s-tick').textContent=tot;
-  const amArr=getAmNumbers(),pmArr=getPmNumbers();
   document.querySelector('#s-total').closest('.stat-card').querySelector('.s-sub').textContent='of '+total+' max';
-  document.querySelector('#s-am').closest('.stat-card').querySelector('.s-sub').textContent='of '+slotConfig.amCount+' ('+slotConfig.amStart+'–'+(amArr[amArr.length-1]||'?')+')';
-  document.querySelector('#s-pm').closest('.stat-card').querySelector('.s-sub').textContent='of '+slotConfig.pmCount+' ('+slotConfig.pmStart+'–'+(pmArr[pmArr.length-1]||'?')+')';
+  document.querySelector('#s-am').closest('.stat-card').querySelector('.s-sub').textContent='of '+cfg.amCount+' ('+cfg.amStart+'–'+(amArr[amArr.length-1]||'?')+')';
+  document.querySelector('#s-pm').closest('.stat-card').querySelector('.s-sub').textContent='of '+cfg.pmCount+' ('+cfg.pmStart+'–'+(pmArr[pmArr.length-1]||'?')+')';
 }
 
 function renderGrid(){
+  updateGridTitles();
   if(!currentDate)return;
   const df=disabledNums[currentDate]||{};
   const takenFromTickets=new Set(ticketsForDate.map(t=>t.number));
@@ -1924,6 +1991,8 @@ function calNextMonth(){ calViewMonth++;if(calViewMonth>11){calViewMonth=0;calVi
 
 // ── calSelectDate — auto-loads date and shows per-date settings panel ──────────
 function calSelectDate(key, d){
+  const sl = document.getElementById('slot-date-label');
+  if (sl) sl.textContent = '— ' + key;
   calSelectedDate = key;
 
   // Update selected bar
@@ -1946,6 +2015,10 @@ function calSelectDate(key, d){
   // Load per-date settings from Firebase
   db.ref('dateSettings/'+key).once('value').then(snap => {
     const ds = snap.val() || {};
+    document.getElementById('date-am-count').value = ds.amCount ?? '';
+    document.getElementById('date-pm-count').value = ds.pmCount ?? '';
+    updateDateSlotHint();
+    showLimitUI(!!ds.limited);
 
     // AM toggle
     const amOn = ds.amEnabled !== false;
@@ -1978,7 +2051,7 @@ function calSelectDate(key, d){
   // Auto-load data for the selected date
   loadDate();
   renderAdminCal();
-  showLimitUI(!!ds.limited);
+
 }
 
 // ── Per-date AM/PM toggle handler ─────────────────────────────────────────────
@@ -2003,6 +2076,30 @@ async function onDateSessionToggle(session){
     setTimeout(() => { status.style.display = 'none'; }, 3000);
     toast((on ? '✅' : '⊘')+' '+label+' '+(on?'enabled':'disabled')+' for '+calSelectedDate);
   } catch(e){ toast('❌ Error: '+e.message); }
+}
+
+  function updateDateSlotHint(){
+  const el=document.getElementById('date-slot-hint');
+  if(!el||!calSelectedDate)return;
+  const c=getDayConfig(calSelectedDate);
+  const am=buildNumbers(c.amStart,c.amCount,c.amType),pm=buildNumbers(c.pmStart,c.pmCount,c.pmType);
+  el.textContent='Default: '+slotConfig.amCount+' AM / '+slotConfig.pmCount+' PM  ·  This date: AM #'+c.amStart+'–#'+(am[am.length-1]||'?')+', PM #'+c.pmStart+'–#'+(pm[pm.length-1]||'?');
+}
+async function saveDateSlots(){
+  if(!calSelectedDate)return toast('⚠ Select a date first');
+  const parse=v=>{v=v.trim();return v===''?null:parseInt(v,10);};
+  const am=parse(document.getElementById('date-am-count').value);
+  const pm=parse(document.getElementById('date-pm-count').value);
+  for(const v of [am,pm]) if(v!==null&&!(v>=1&&v<=500)) return toast('❌ Slots must be 1–500 (blank = default)');
+  try{
+    await db.ref('dateSettings/'+calSelectedDate).update({amCount:am,pmCount:pm});
+    toast('✅ Slots saved for '+calSelectedDate);
+  }catch(e){toast('❌ Error: '+e.message);}
+}
+async function clearDateSlots(){
+  document.getElementById('date-am-count').value='';
+  document.getElementById('date-pm-count').value='';
+  await saveDateSlots();
 }
 
 // ── Holiday save / remove ─────────────────────────────────────────────────────
